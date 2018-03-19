@@ -4,7 +4,7 @@ from flask.ext.mysql import MySQL
 from werkzeug import generate_password_hash, check_password_hash
 from flask import flash, render_template, redirect, url_for, session
 
-from module.database import Database
+#from module.database import Database
 app = Flask(__name__)
 api = Api(app)
 
