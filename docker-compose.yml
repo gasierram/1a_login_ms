@@ -4,9 +4,13 @@ services:
     build: .
     ports:
      - "5000:5000"
-# restapi:
-#   build: ./
-#   ports:
-#    - "5000:5000"
-#   volumes:
-#    - .:/code
+  1a_login_db:
+    build: 1a_login_db/.
+    volumes:
+      - /var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: users
+    ports:
+      - "3306:3306"
+         restart: always
