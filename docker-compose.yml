@@ -1,0 +1,12 @@
+version: '2'
+services:
+  1a_login_ms:
+    build: .
+    ports:
+     - "5000:5000"
+# restapi:
+#   build: ./
+#   ports:
+#    - "5000:5000"
+#   volumes:
+#    - .:/code
