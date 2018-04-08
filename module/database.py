@@ -2,7 +2,7 @@ import pymysql
 
 class Database:
     def connect(self):
-        return pymysql.connect("localhost","root","1234","users" )
+        return pymysql.connect("1a_login_db","root","1234","users" )
     
     def read(self, id):
         con = Database.connect(self)
