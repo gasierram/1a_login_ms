@@ -1,0 +1,188 @@
+#Test with: http://editor.swagger.io/
+
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Microservicio para loguearse
+  description: Python(Flask) + MySQL
+  license:
+    name: Software Architecture 2018-I
+host: 192.168.99.102:3005
+basePath: /
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /login:
+    post:
+      summary: Creates a new login
+      operationId: createLogin
+      parameters:
+        - name: login
+          in: body
+          required: true
+          description: Login Object
+          schema:
+            $ref: '#/definitions/LoginInput'
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+    get:
+      summary: Returns all Login
+      operationId: getAllLogin
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/LoginList'
+        '406':
+          description: Not Acceptable (Invalid Params)
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+  /login/{id}:
+    get:
+      summary: Returns a Login with the given id
+      operationId: getLoginById
+      parameters:
+        - name: id
+          in: path
+          description: The id of the student to be returned
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/Login'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+    patch:
+      summary: Updates a login with the given id
+      operationId: updateLogin
+      parameters:
+        - name: id
+          in: path
+          description: The id of the login to be updated
+          required: true
+          type: integer
+        - name: login
+          in: body
+          required: true
+          description: Login Object
+          schema:
+            $ref: '#/definitions/LoginInput'
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+    delete:
+      summary: Deletes a student with the given id
+      operationId: deleteLogin
+      parameters:
+        - name: id
+          in: path
+          description: The id of the login to be deleted
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Ok
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+definitions:
+
+  # Login
+  Login:
+    type: object
+    properties:
+      id:
+        type: integer
+      email:
+        type: string
+      password:
+        type: string
+
+  LoginInput:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      
+  LoginList:
+    type: object
+    required:
+      - total
+      - list
+    properties:
+      total:
+        type: number
+      list:
+        type: array
+        items:
+          $ref: '#/definitions/Login'
+
+# Errors
+  ErrorModel:
+    type: object
+    required:
+      - message
+      - code
+    properties:
+      message:
+        type: string
+      code:
+        type: number
+      description:
+        type: object

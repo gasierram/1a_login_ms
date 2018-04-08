@@ -56,7 +56,6 @@ class login(Resource):
 
 api.add_resource(login, '/login')
 
-
 class CreateUser(Resource):
     global cursor
     def post(self): 
@@ -104,7 +103,6 @@ class DeleteUser(Resource):
             args = parser.parse_args()
 
             _userEmail = args['email']
-#            _userPassword = args['password']
 
             conn = mysql.connect()
             cursor = conn.cursor()
@@ -127,7 +125,6 @@ class DeleteUser(Resource):
             cursor.close()
             conn.close()
 api.add_resource(DeleteUser, '/DeleteUser')
-
 
 class GetUsers(Resource):
     def post(self):
