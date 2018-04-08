@@ -1,4 +1,4 @@
-CREATE DATABASE users;
+CREATE DATABASE IF NOT EXISTS users;
 
 CREATE TABLE `users`.`tbl_user` (
   `user_id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -8,6 +8,8 @@ CREATE TABLE `users`.`tbl_user` (
   PRIMARY KEY (`user_id`));
 
 
+USE `users`;
+DROP procedure IF EXISTS `sp_createUser`;
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_createUser`(
     IN p_name VARCHAR(255),
@@ -15,7 +17,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_createUser`(
     IN p_password VARCHAR(255)
 )
 BEGIN
-    if ( select exists (select 1 from tbl_user where user_email = p_username) ) THEN
+    if ( select exists (select 1 from tbl_user where user_email = p_email) ) THEN
      
         select 'Email Exists !!';
      
@@ -63,14 +65,15 @@ DROP procedure IF EXISTS `sp_GetAllItems`;
 DELIMITER $$
 USE `users`$$
 CREATE PROCEDURE `sp_GetAllItems` (
-in p_email int
 )
 BEGIN
-    select user_email from tbl_user where user_email = p_email; 
+    select * from tbl_user; 
 END$$
 
 DELIMITER ;
 
+USE `users`;
+DROP procedure IF EXISTS `sp_deleteUser`;
 
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_deleteUser`(

@@ -83,7 +83,7 @@ class CreateUser(Resource):
             if len(data) is 0:
                 conn.commit()
                # return {'Email': args['email'], 'Password': args['password']}
-                return json.dumps(args).strip("\\")
+                return json.dumps(args).replace("\'", '"')
             else:
                 return json.dumps({'error':str(data[0])})    
 
@@ -101,8 +101,8 @@ class DeleteUser(Resource):
         try: 
             #parse the arguments
             parser = reqparse.RequestParser()
-            parser.add_argument('email', type=str, help='Email address to create user')
-            #parser.add_argument('password', type=str, help='Password to create user')
+            parser.add_argument('email', type=str, help='Email address to delete user')
+            #parser.add_argument('password', type=str, help='Password to delete user')
             args = parser.parse_args()
 
             _userEmail = args['email']
@@ -118,7 +118,7 @@ class DeleteUser(Resource):
             if len(data) is 0:
                 conn.commit()
                # return {'Email': args['email'], 'Password': args['password']}
-                return json.dumps({'Se ha eliminado de login': args}).strip("\\")
+                return json.dumps({'Ha cerrado sesion el usuario': args}).strip('"\"')
             else:
                 return json.dumps({'error':str(data[0])})    
 
@@ -131,18 +131,18 @@ api.add_resource(DeleteUser, '/DeleteUser')
 
 #GET login
 class GetUsers(Resource):
-    def post(self):
+    def get(self):
         try: 
             # Parse the arguments
-            parser = reqparse.RequestParser()
-            parser.add_argument('email', type=str)
-            args = parser.parse_args()
+            #parser = reqparse.RequestParser()
+            #parser.add_argument('email', type=str)
+            #args = parser.parse_args()
 
-            _userEmail = args['email']
+            #_userEmail = args['email']
 
             conn = mysql.connect()
             cursor = conn.cursor()
-            cursor.callproc('sp_GetAllItems',(_userEmail,))
+            cursor.callproc('sp_GetAllItems',)
             data = cursor.fetchall()
 
             users_list=[]
@@ -154,7 +154,8 @@ class GetUsers(Resource):
                     'password':item[3]
                 }
                 users_list.append(i)
-            return json.dumps({'StatusCode':'200'})
+
+            return {'StatusCode':'200','Items':users_list}
 
         except Exception as e:
             return {'error': str(e)}
