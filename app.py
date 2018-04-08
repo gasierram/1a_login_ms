@@ -19,10 +19,12 @@ mysql = MySQL()
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = '1234'
 app.config['MYSQL_DATABASE_DB'] = 'users'
-# app.config['MYSQL_DATABASE_HOST'] = '1a_login_db'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_HOST'] = '1a_login_db'
+#app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
+
+#POST create
 class login(Resource):
     def post(self):
         try:
@@ -56,6 +58,7 @@ class login(Resource):
 
 api.add_resource(login, '/login')
 
+#POST Create
 class CreateUser(Resource):
     global cursor
     def post(self): 
@@ -126,6 +129,7 @@ class DeleteUser(Resource):
             conn.close()
 api.add_resource(DeleteUser, '/DeleteUser')
 
+#GET login
 class GetUsers(Resource):
     def post(self):
         try: 
@@ -156,6 +160,42 @@ class GetUsers(Resource):
             return {'error': str(e)}
 
 api.add_resource(GetUsers, '/GetUsers')
+
+#POST Update
+class UpdateUser(Resource):
+    global cursor
+    def post(self): 
+        try: 
+            #parse the arguments
+            parser = reqparse.RequestParser()
+            parser.add_argument('email', type=str, help='Email address to update user')
+            parser.add_argument('password', type=str, help='Password to update user')
+            args = parser.parse_args()
+
+            _userEmail = args['email']
+            _userPassword = args['password']
+
+            conn = mysql.connect()
+            cursor = conn.cursor()
+
+            #_hashed_password = generate_password_hash(_userPassword)
+
+            cursor.callproc('sp_updateUser',('',_userEmail,_userPassword))#_hashed_password))
+            data = cursor.fetchall()
+
+            if len(data) is 0:
+                conn.commit()
+               # return {'Email': args['email'], 'Password': args['password']}
+                return json.dumps(args).strip("\\")
+            else:
+                return json.dumps({'error':str(data[0])})    
+
+        except Exception as e: 
+            return json.dumps({'error': str(e)})
+        finally:
+            cursor.close()
+            conn.close()
+api.add_resource(UpdateUser, '/UpdateUser')
 
 @app.route('/logout')
 def logout():

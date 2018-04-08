@@ -7,7 +7,7 @@ info:
   description: Python(Flask) + MySQL
   license:
     name: Software Architecture 2018-I
-host: 192.168.99.102:3005
+host: 192.168.99.102:5000
 basePath: /
 schemes:
   - http
