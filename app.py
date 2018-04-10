@@ -4,7 +4,7 @@ from pprint import pprint
 from flask import Flask
 from flask import render_template
 from flask import request
-from flask import json
+from flask import json, make_response
 import json as simplejson
 #import simplejson
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -37,6 +37,8 @@ def index():
     data = cursor.fetchall()
     dataList = []
     if data is not None:
+        cursor.close()
+        conn.close()
         for item in data:
             dataTempObj = {
                 'id'        : item[0],
@@ -45,8 +47,14 @@ def index():
                 'password'  : item[3]
             }
             dataList.append(dataTempObj)
-        return json.dumps(dataList)
+            
+            resp = make_response(json.dumps(dataList))
+            resp.headers["Content-Type"] = "application/json" 
+        return resp
+
+        #return json.dumps(dataList)
     else:
+        conn.close()
         return 'error'
 
 # POSTMAN
@@ -92,18 +100,26 @@ def signIn():
         cursor = conn.cursor()
         cursor.execute(
             """SELECT * FROM users.user Where email = %s""", (_email))
-        data = cursor.fetchall()
-        dataList = []
+        data = cursor.fetchall()[0]
+        #dataList = []
+        
+        cursor.close() 
+        conn.close()
+
         if data is not None:
-            for item in data:
-                dataTempObj = {
-                    'id'        : item[0],
-                    'name'      : item[1],
-                    'email'     : item[2],
-                    'password'  : item[3]
-                }
-                dataList.append(dataTempObj)
-        return json.dumps(dataList).strip('[').strip(']')
+            
+            dataTempObj = {
+                'id'        : data[0],
+                'name'      : data[1],
+                'email'     : data[2],
+                'password'  : data[3]
+            }
+            
+            resp = make_response(json.dumps(dataTempObj))
+            resp.headers["Content-Type"] = "application/json" 
+        return resp
+
+        #return json.dumps(dataTempObj)
     else:
         return json.dumps({'error':'Ingrese los datos requeridos'})
 
@@ -118,6 +134,7 @@ def insert(user,email,password):
             ) 
             VALUES (%s,%s,%s)""",(user,email,password))
     conn.commit()
+    cursor.close()
     conn.close()
 
 @app.route('/login/update/<id>',methods=['PATCH'])
@@ -133,19 +150,67 @@ def update(id):
     conn.commit()
     conn.close()
     if(result):
-        return json.dumps({'updated':'true'})
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute(
+            """SELECT * FROM users.user Where email = %s""", (_email))
+        data = cursor.fetchall()[0]
+        #dataList = []
+        
+        cursor.close() 
+        conn.close()
+
+        if data is not None:
+            
+            dataTempObj = {
+                'id'        : data[0],
+                'name'      : data[1],
+                'email'     : data[2],
+                'password'  : data[3]
+            }
+            
+            resp = make_response(json.dumps(dataTempObj))
+            resp.headers["Content-Type"] = "application/json" 
+        return resp
+
+        #return json.dumps({'updated':'true'})
     else:
         return json.dumps({'updated':'false'})
 
 @app.route('/login/delete/<id>',methods=['DELETE'])
 def delete(id):
+    
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute(
+        """SELECT * FROM users.user Where id = %s""", (id))
+    data = cursor.fetchall()[0]
+    #dataList = []
+    
+    cursor.close() 
+    conn.close()
+
+    if data is not None:
+        
+        dataTempObj = {
+            'id'        : data[0],
+            'name'      : data[1],
+            'email'     : data[2],
+            'password'  : data[3]
+        }
+        
+        resp = make_response(json.dumps(dataTempObj))
+        resp.headers["Content-Type"] = "application/json" 
+    
     conn = mysql.connect()
     cursor = conn.cursor()
     result = cursor.execute("DELETE FROM user WHERE id = %s",int(id))
     conn.commit()
+    cursor.close()
     conn.close()
     if(result):
-        return json.dumps({'delete':'success'})
+        return resp
+        #return json.dumps({'delete':'success'})
     else:
         return json.dumps({'delete':'failure'})
 
