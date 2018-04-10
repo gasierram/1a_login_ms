@@ -147,17 +147,21 @@ definitions:
     properties:
       id:
         type: integer
+      name:
+        type: string
       email:
         type: string
-      password:
+      pass:
         type: string
 
   LoginInput:
     type: object
     properties:
+      name:
+        type: string
       email:
         type: string
-      password:
+      pass:
         type: string
       
   LoginList:

@@ -61,7 +61,7 @@ def insert(user,email,password):
     conn.commit()
     conn.close()
 
-@app.route('/show')
+@app.route('/show',methods=['GET'])
 def show():
     conn = mysql.connect()
     cursor = conn.cursor()
