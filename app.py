@@ -17,8 +17,8 @@ mysql = MySQL()
 app = Flask(__name__)
 #app = Flask(__name__,template_folder=template_path)
 # mysql configuratoin
-#app.config['MYSQL_DATABASE_HOST']       = '1a_login_db'
-app.config['MYSQL_DATABASE_HOST']       = 'localhost'
+app.config['MYSQL_DATABASE_HOST']       = '1a_login_db'
+#app.config['MYSQL_DATABASE_HOST']       = 'localhost'
 app.config['MYSQL_DATABASE_USER']       = 'root'
 app.config['MYSQL_DATABASE_PASSWORD']   = '1234'
 app.config['MYSQL_DATABASE_DB']         = 'users'
@@ -29,7 +29,7 @@ mysql.init_app(app)
 #    #return render_template('static/index.html')
 #    return 'Hello World! I have been seen'
 
-@app.route('/logueados',methods=['GET'])
+@app.route('/login',methods=['GET'])
 def index():
     conn = mysql.connect()
     cursor = conn.cursor()
@@ -50,8 +50,8 @@ def index():
         return 'error'
 
 # POSTMAN
-#get logueados by id
-@app.route('/logueados/<id>', methods=['GET'])
+#get login by id
+@app.route('/login/<id>', methods=['GET'])
 def get(id):
     conn = mysql.connect()
     cursor = conn.cursor()
@@ -72,7 +72,7 @@ def get(id):
     else:
         return 'error, id no encontrado'
 
-@app.route('/logueados',methods=['POST'])
+@app.route('/login',methods=['POST'])
 def signIn():
     # open connection
     # # read request from UI
@@ -104,7 +104,7 @@ def insert(user,email,password):
     conn.commit()
     conn.close()
 
-@app.route('/logueados/update/<id>',methods=['PATCH'])
+@app.route('/login/update/<id>',methods=['PATCH'])
 def update(id):
     request_json = request.get_json()
     _name           = request_json.get('name')
@@ -121,7 +121,7 @@ def update(id):
     else:
         return json.dumps({'updated':'false'})
 
-@app.route('/logueados/delete/<id>',methods=['DELETE'])
+@app.route('/login/delete/<id>',methods=['DELETE'])
 def delete(id):
     conn = mysql.connect()
     cursor = conn.cursor()
