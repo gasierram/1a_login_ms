@@ -1,4 +1,4 @@
-CREATE DATABASE IF NOT EXISTS users;
+/* CREATE DATABASE IF NOT EXISTS users;
 
 CREATE TABLE `users`.`tbl_user` (
   `user_id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -83,3 +83,4 @@ BEGIN
 	DELETE FROM tbl_user where user_email = p_email;
 END$$
 DELIMITER ;
+ */
