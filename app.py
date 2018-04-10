@@ -87,7 +87,23 @@ def signIn():
 
     if _name and _email and _pass:
         insert(_name,_email,_pass)
-        return json.dumps({'success':'Usuario Logueado correctamente '})
+
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute(
+            """SELECT * FROM users.user Where email = %s""", (_email))
+        data = cursor.fetchall()
+        dataList = []
+        if data is not None:
+            for item in data:
+                dataTempObj = {
+                    'id'        : item[0],
+                    'name'      : item[1],
+                    'email'     : item[2],
+                    'password'  : item[3]
+                }
+                dataList.append(dataTempObj)
+        return json.dumps(dataList).strip('[').strip(']')
     else:
         return json.dumps({'error':'Ingrese los datos requeridos'})
 
