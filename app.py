@@ -65,10 +65,10 @@ def get(id):
     cursor = conn.cursor()
     cursor.execute(
         """SELECT * FROM users.user Where id = %s""", (id))
-    data = cursor.fetchall()
+    data = cursor.fetchall()[0]
     cursor.close()
     conn.close()
-    dataList = []
+    #dataList = []
     if data is not None:
         
         dataTempObj = {
