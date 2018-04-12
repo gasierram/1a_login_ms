@@ -33,42 +33,35 @@ mysql.init_app(app)
 def index():
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users.user ORDER BY id")
+    cursor.execute("SELECT * FROM users.user")
     data = cursor.fetchall()
-    #dataList = []
-    
-    cursor.close() 
-    conn.close()
+    dataList = []
     if data is not None:
-        
-        dataTempObj = {
-            'id'        : data[0],
-            'name'      : data[1],
-            'email'     : data[2],
-            'password'  : data[3]
-        }
-        
-        resp = make_response(json.dumps(dataTempObj))
+        cursor.close()
+        conn.close()
+        for item in data:
+            dataTempObj = {
+               'id'        : item[0],
+                'name'      : item[1],
+                'email'     : item[2],
+                'password'  : item[3]
+            }
+            dataList.append(dataTempObj)
+        resp = make_response(json.dumps(dataList))
         resp.headers["Content-Type"] = "application/json" 
         return resp
-
-    # if data is not None:
-    #     for item in data: 
-    #         dataTempObj = {
-    #             'id'        : item[0],
-    #             'name'      : item[1],
-    #             'email'     : item[2],
-    #             'password'  : item[3]
-    #         }
-    #         dataList.append(dataTempObj)
-            
-    #         resp = make_response(json.dumps(dataTempObj))
-    #         resp.headers["Content-Type"] = "application/json" 
-    #     return resp
-    #return json.dumps(dataList)
+        #return json.dumps(dataList)
     else:
         conn.close()
         return 'error'
+ 
+
+
+
+
+
+
+
 
 # POSTMAN
 #get login by id
