@@ -33,13 +33,12 @@ mysql.init_app(app)
 def index():
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users.user")
-    data = cursor.fetchone()
+    cursor.execute("SELECT * FROM users.user ORDER BY id")
+    data = cursor.fetchall()
     #dataList = []
     
     cursor.close() 
     conn.close()
-
     if data is not None:
         
         dataTempObj = {
@@ -52,6 +51,20 @@ def index():
         resp = make_response(json.dumps(dataTempObj))
         resp.headers["Content-Type"] = "application/json" 
         return resp
+
+    # if data is not None:
+    #     for item in data: 
+    #         dataTempObj = {
+    #             'id'        : item[0],
+    #             'name'      : item[1],
+    #             'email'     : item[2],
+    #             'password'  : item[3]
+    #         }
+    #         dataList.append(dataTempObj)
+            
+    #         resp = make_response(json.dumps(dataTempObj))
+    #         resp.headers["Content-Type"] = "application/json" 
+    #     return resp
     #return json.dumps(dataList)
     else:
         conn.close()
@@ -65,7 +78,7 @@ def get(id):
     cursor = conn.cursor()
     cursor.execute(
         """SELECT * FROM users.user Where id = %s""", (id))
-    data = cursor.fetchall()[0]
+    data = cursor.fetchone()
     cursor.close()
     conn.close()
     #dataList = []
