@@ -1,15 +1,12 @@
 import os
 from pprint import pprint
 
-from flask import Flask
-from flask import render_template
-from flask import request
-from flask import json, make_response
+from flask import Flask, render_template, request, json, make_response
 import json as simplejson
 #import simplejson
 from werkzeug.security import generate_password_hash, check_password_hash
 from flaskext.mysql import MySQL
-
+#import module.database
 #project_root = os.path.dirname(__name__)
 #template_path = os.path.join(project_root)
 
@@ -24,10 +21,23 @@ app.config['MYSQL_DATABASE_PASSWORD']   = '1234'
 app.config['MYSQL_DATABASE_DB']         = 'users'
 mysql.init_app(app)
 
-#@app.route('/')
-#def main_world():
-#    #return render_template('static/index.html')
-#    return 'Hello World! I have been seen'
+#conectiondb()
+# def conectiondb():
+# cnx = mysql.connect()
+# cursor = cnx.cursor()
+# query = ("""CREATE DATABASE IF NOT EXISTS users;""")
+# query1 = ("""DROP TABLE IF EXISTS `user`;""")
+# query2 = ("""CREATE TABLE `user` ( `id` int(50) NOT NULL AUTO_INCREMENT, `username` varchar(255) DEFAULT NULL, `email` varchar(255) NOT NULL UNIQUE, `password` varchar(255) NOT  NULL, PRIMARY KEY (`id`)) ;""")
+# query3 = ("""DROP TABLE IF EXISTS `usersapp`;""")
+# query4 = ("""CREATE TABLE `usersapp` ( `id` int(50) NOT NULL AUTO_INCREMENT, `name` varchar(255) DEFAULT NULL, `lastname` varchar(255) DEFAULT NULL , `id_code` int NOt NULL UNIQUE, `email` varchar(255) DEFAULT NULL , `id_type` varchar(255) DEFAULT NULL, PRIMARY KEY (`id`) );""")
+# cursor.execute(query)
+# cursor.execute(query1)
+# cursor.execute(query2)
+# cursor.execute(query3)
+# cursor.execute(query4)
+# cnx.commit()
+# cursor.close()
+# cnx.close()
 
 @app.route('/login',methods=['GET'])
 def index():
@@ -228,6 +238,8 @@ def delete(id):
 #@app.errorhandler(404)
 #def page_not_found(error):
 #    return render_template('error.html')
+
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
