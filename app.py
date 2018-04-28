@@ -14,8 +14,8 @@ mysql = MySQL()
 app = Flask(__name__)
 #app = Flask(__name__,template_folder=template_path)
 # mysql configuratoin
-#app.config['MYSQL_DATABASE_HOST']       = '1a_login_db'
-app.config['MYSQL_DATABASE_HOST']       = 'localhost'
+app.config['MYSQL_DATABASE_HOST']       = '1a_login_db'
+#app.config['MYSQL_DATABASE_HOST']       = 'localhost'
 app.config['MYSQL_DATABASE_USER']       = 'root'
 app.config['MYSQL_DATABASE_PASSWORD']   = '1234'
 app.config['MYSQL_DATABASE_DB']         = 'users'
