@@ -14,8 +14,8 @@ mysql = MySQL()
 app = Flask(__name__)
 #app = Flask(__name__,template_folder=template_path)
 # mysql configuratoin
-app.config['MYSQL_DATABASE_HOST']       = '1a_login_db'
-#app.config['MYSQL_DATABASE_HOST']       = 'localhost'
+#app.config['MYSQL_DATABASE_HOST']       = '1a_login_db'
+app.config['MYSQL_DATABASE_HOST']       = 'localhost'
 app.config['MYSQL_DATABASE_USER']       = 'root'
 app.config['MYSQL_DATABASE_PASSWORD']   = '1234'
 app.config['MYSQL_DATABASE_DB']         = 'users'
@@ -25,15 +25,9 @@ mysql.init_app(app)
 cnx = mysql.connect()
 cursor = cnx.cursor()
 query = ("""CREATE DATABASE IF NOT EXISTS users;""")
-query1 = ("""DROP TABLE IF EXISTS `user`;""")
-query2 = ("""CREATE TABLE `user` ( `id` int(50) NOT NULL AUTO_INCREMENT, `username` varchar(255) DEFAULT NULL, `email` varchar(255) NOT NULL UNIQUE, `password` varchar(255) NOT  NULL, PRIMARY KEY (`id`)) ;""")
-query3 = ("""DROP TABLE IF EXISTS `usersapp`;""")
-query4 = ("""CREATE TABLE `usersapp` ( `id` int(50) NOT NULL AUTO_INCREMENT, `name` varchar(255) DEFAULT NULL, `lastname` varchar(255) DEFAULT NULL , `id_code` int NOt NULL UNIQUE, `email` varchar(255) DEFAULT NULL , `id_type` varchar(255) DEFAULT NULL, PRIMARY KEY (`id`) );""")
+query1 = ("""CREATE TABLE IF NOT EXISTS `user` ( `id` int(50) NOT NULL AUTO_INCREMENT, `username` varchar(255) DEFAULT NULL, `email` varchar(255) NOT NULL UNIQUE, `password` varchar(255) NOT  NULL, PRIMARY KEY (`id`)) ;""")
 cursor.execute(query)
 cursor.execute(query1)
-cursor.execute(query2)
-cursor.execute(query3)
-cursor.execute(query4)
 cnx.commit()
 cursor.close()
 cnx.close()
@@ -51,9 +45,9 @@ def index():
         for item in data:
             dataTempObj = {
                'id'        : item[0],
-                'name'      : item[1],
-                'email'     : item[2],
-                'password'  : item[3]
+               'name'      : item[1],
+               'email'     : item[2],
+               'password'  : item[3]
             }
             dataList.append(dataTempObj)
         resp = make_response(json.dumps(dataList))
@@ -62,15 +56,8 @@ def index():
         #return json.dumps(dataList)
     else:
         conn.close()
-        return 'error'
+        return json.dumps({'error'})
  
-
-
-
-
-
-
-
 
 # POSTMAN
 #get login by id
@@ -97,7 +84,7 @@ def get(id):
         resp.headers["Content-Type"] = "application/json" 
         return resp
     else:
-        return 'error, id no encontrado'
+        return json.dumps({'error, id no encontrado'})
 
 @app.route('/login',methods=['POST'])
 def signIn():
@@ -233,12 +220,9 @@ def delete(id):
     else:
         return json.dumps({'delete':'failure'})
 
-
 #@app.errorhandler(404)
 #def page_not_found(error):
 #    return render_template('error.html')
-
-
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
