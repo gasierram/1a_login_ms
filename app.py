@@ -14,8 +14,8 @@ mysql = MySQL()
 app = Flask(__name__)
 #app = Flask(__name__,template_folder=template_path)
 # mysql configuratoin
-app.config['MYSQL_DATABASE_HOST']       = '1a_login_db'
-#app.config['MYSQL_DATABASE_HOST']       = 'localhost'
+#app.config['MYSQL_DATABASE_HOST']       = '1a_login_db'
+app.config['MYSQL_DATABASE_HOST']       = 'localhost'
 app.config['MYSQL_DATABASE_USER']       = 'root'
 app.config['MYSQL_DATABASE_PASSWORD']   = '1234'
 app.config['MYSQL_DATABASE_DB']         = 'users'
@@ -25,7 +25,7 @@ mysql.init_app(app)
 cnx = mysql.connect()
 cursor = cnx.cursor()
 query = ("""CREATE DATABASE IF NOT EXISTS users;""")
-query1 = ("""CREATE TABLE IF NOT EXISTS `user` ( `id` int(50) NOT NULL AUTO_INCREMENT, `token` varchar(255) UNIQUE, `username` varchar(255) NOT NULL, `date` date null, PRIMARY KEY (`id`)) ;""")
+query1 = ("""CREATE TABLE IF NOT EXISTS `user` ( `id` int(50) NOT NULL AUTO_INCREMENT, `token` varchar(255) not null UNIQUE, `username` varchar(255) NOT NULL, `date` date not null, PRIMARY KEY (`id`)) ;""")
 cursor.execute(query)
 cursor.execute(query1)
 cnx.commit()
@@ -222,7 +222,7 @@ def delete(id):
 
 #@app.errorhandler(404)
 #def page_not_found(error):
-#    return render_template('error.html')
+#return render_template('error.html')
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
