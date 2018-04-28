@@ -25,7 +25,7 @@ mysql.init_app(app)
 cnx = mysql.connect()
 cursor = cnx.cursor()
 query = ("""CREATE DATABASE IF NOT EXISTS users;""")
-query1 = ("""CREATE TABLE IF NOT EXISTS `user` ( `id` int(50) NOT NULL AUTO_INCREMENT, `username` varchar(255) DEFAULT NULL, `email` varchar(255) NOT NULL UNIQUE, `password` varchar(255) NOT  NULL, PRIMARY KEY (`id`)) ;""")
+query1 = ("""CREATE TABLE IF NOT EXISTS `user` ( `id` int(50) NOT NULL AUTO_INCREMENT, `token` varchar(255) , `username` varchar(255), `date` date null, PRIMARY KEY (`id`)) ;""")
 cursor.execute(query)
 cursor.execute(query1)
 cnx.commit()
@@ -45,9 +45,9 @@ def index():
         for item in data:
             dataTempObj = {
                'id'        : item[0],
-               'name'      : item[1],
-               'email'     : item[2],
-               'password'  : item[3]
+               'token'      : item[1],
+               'username'     : item[2],
+               'date'  : item[3]
             }
             dataList.append(dataTempObj)
         resp = make_response(json.dumps(dataList))
@@ -75,9 +75,9 @@ def get(id):
         
         dataTempObj = {
             'id'        : data[0],
-            'name'      : data[1],
-            'email'     : data[2],
-            'password'  : data[3]
+            'token'      : data[1],
+            'username'     : data[2],
+            'date'  : data[3]
         }
         
         resp = make_response(json.dumps(dataTempObj))
@@ -94,18 +94,18 @@ def signIn():
     # _email  = request.form['email']
     # _pass   = request.form['pass']
     request_json     = request.get_json()
-    _name           = request_json.get('name')
-    _email           = request_json.get('email')
-    _pass           = request_json.get('pass')
+    _token           = request_json.get('token')
+    _username           = request_json.get('username')
+    _date           = request_json.get('date')
 #    _hash_pass = generate_password_hash(_pass)
 
-    if _name and _email and _pass:
-        insert(_name,_email,_pass)
+    if _token and _username and _date:
+        insert(_token,_username,_date)
 
         conn = mysql.connect()
         cursor = conn.cursor()
         cursor.execute(
-            """SELECT * FROM users.user Where email = %s""", (_email))
+            """SELECT * FROM users.user Where username = %s""", (_username))
         data = cursor.fetchall()[0]
         #dataList = []
         
@@ -116,9 +116,9 @@ def signIn():
             
             dataTempObj = {
                 'id'        : data[0],
-                'name'      : data[1],
-                'email'     : data[2],
-                'password'  : data[3]
+                'token'      : data[1],
+                'username'     : data[2],
+                'date'  : data[3]
             }
             
             resp = make_response(json.dumps(dataTempObj))
@@ -129,16 +129,16 @@ def signIn():
     else:
         return json.dumps({'error':'Ingrese los datos requeridos'})
 
-def insert(user,email,password):
+def insert(token,username,date):
     conn = mysql.connect()
     cursor = conn.cursor()
     cursor.execute(
         """INSERT INTO users.user (
+                token,
                 username,
-                email,
-                password
+                date
             ) 
-            VALUES (%s,%s,%s)""",(user,email,password))
+            VALUES (%s,%s,%s)""",(token,username,date))
     conn.commit()
     cursor.close()
     conn.close()
@@ -146,20 +146,20 @@ def insert(user,email,password):
 @app.route('/login/update/<id>',methods=['PATCH'])
 def update(id):
     request_json = request.get_json()
-    _name           = request_json.get('name')
-    _email           = request_json.get('email')
-    _pass           = request_json.get('pass')
+    _token           = request_json.get('token')
+    _username           = request_json.get('username')
+    _date          = request_json.get('date')
 
     conn = mysql.connect()
     cursor = conn.cursor()
-    result = cursor.execute("UPDATE user SET username = %s, email = %s, password = %s WHERE id = %s",(_name,_email,_pass,int(id)))
+    result = cursor.execute("UPDATE user SET token = %s, username = %s, date = %s WHERE id = %s",(_token,_username,_date,int(id)))
     conn.commit()
     conn.close()
     if(result):
         conn = mysql.connect()
         cursor = conn.cursor()
         cursor.execute(
-            """SELECT * FROM users.user Where email = %s""", (_email))
+            """SELECT * FROM users.user Where token = %s""", (_token))
         data = cursor.fetchall()[0]
         #dataList = []
         
@@ -170,9 +170,9 @@ def update(id):
             
             dataTempObj = {
                 'id'        : data[0],
-                'name'      : data[1],
-                'email'     : data[2],
-                'password'  : data[3]
+                'token'      : data[1],
+                'username'     : data[2],
+                'date'  : data[3]
             }
             
             resp = make_response(json.dumps(dataTempObj))
@@ -200,9 +200,9 @@ def delete(id):
         
         dataTempObj = {
             'id'        : data[0],
-            'name'      : data[1],
-            'email'     : data[2],
-            'password'  : data[3]
+            'token'      : data[1],
+            'username'     : data[2],
+            'date'  : data[3]
         }
         
         resp = make_response(json.dumps(dataTempObj))
