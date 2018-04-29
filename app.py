@@ -89,7 +89,7 @@ def get(token):
         return resp
 
     today = datetime.date.today() 
-    if today < data[2]: 
+    if today > data[2]: 
         resp = make_response(json.dumps({'error': 'el token ha caducado'}), 403)
         resp.headers["Content-Type"] = "application/json" 
         return resp
