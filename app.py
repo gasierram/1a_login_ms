@@ -69,12 +69,14 @@ def index():
 
 # POSTMAN
 #get login by id
-@app.route('/login/<id>', methods=['GET'])
-def get(id):
+@app.route('/login/<token>', methods=['GET'])
+def get(token):
+    sha_token = encrypt_string(token)
+
     conn = mysql.connect()
     cursor = conn.cursor()
     cursor.execute(
-        """SELECT * FROM users.user Where id = %s""", (id))
+        """SELECT * FROM users.user Where token = %s""", (sha_token))
     data = cursor.fetchone()
     cursor.close()
     conn.close()
@@ -127,8 +129,9 @@ def signIn():
             
             dataTempObj = {
                 'token'        : token,
-                'id'      : data[1],
+                #'id'      : data[1],
                 'date'     : data[2],
+                #'token_sha' : data[0]
             }
             
             resp = make_response(json.dumps(dataTempObj))
