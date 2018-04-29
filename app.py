@@ -56,7 +56,7 @@ def index():
             dataTempObj = {
                'token'        : item[0],
                'id'      : item[1],
-               'date'  : item[2]
+               'date'  : str(item[2])
             }
             dataList.append(dataTempObj)
         resp = make_response(json.dumps(dataList))
@@ -89,7 +89,15 @@ def get(token):
         return resp
 
     today = datetime.date.today() 
-    if today > data[2]: 
+    if today > data[2]:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute(
+            """DELETE FROM user WHERE token = %s """,(sha_token))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
         resp = make_response(json.dumps({'error': 'el token ha caducado'}), 403)
         resp.headers["Content-Type"] = "application/json" 
         return resp
@@ -97,7 +105,7 @@ def get(token):
     dataTempObj = {
         'token'        : data[0],
         'id'      : data[1],
-        'date'  : data[2]
+        'date'  : str(data[2])
     }
     
     resp = make_response(json.dumps(dataTempObj))
@@ -142,7 +150,7 @@ def signIn():
             dataTempObj = {
                 'token'        : token,
                 #'id'      : data[1],
-                'date'     : data[2],
+                'date'     : str(data[2]),
                 #'token_sha' : data[0]
             }
             
@@ -263,4 +271,4 @@ def delete(id):
 #return render_template('error.html')
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", debug=True)
