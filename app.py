@@ -6,6 +6,9 @@ import json as simplejson
 #import simplejson
 from werkzeug.security import generate_password_hash, check_password_hash
 from flaskext.mysql import MySQL
+import hashlib
+import datetime
+import random, string
 #import module.database
 #project_root = os.path.dirname(__name__)
 #template_path = os.path.join(project_root)
@@ -25,12 +28,18 @@ mysql.init_app(app)
 cnx = mysql.connect()
 cursor = cnx.cursor()
 query = ("""CREATE DATABASE IF NOT EXISTS users;""")
-query1 = ("""CREATE TABLE IF NOT EXISTS `user` ( `id` int(50) NOT NULL AUTO_INCREMENT, `token` varchar(255) not null UNIQUE, `username` varchar(255) NOT NULL, `date` date not null, PRIMARY KEY (`id`)) ;""")
+query1 = ("""CREATE TABLE IF NOT EXISTS `user` ( `token` varchar(255) NOT NULL, `id` varchar(255) NOT NULL, `date` date not null, PRIMARY KEY (`token`)) ;""")
 cursor.execute(query)
 cursor.execute(query1)
 cnx.commit()
 cursor.close()
 cnx.close()
+
+
+def encrypt_string(hash_string):
+    sha_signature = \
+        hashlib.sha256(hash_string.encode()).hexdigest()
+    return sha_signature
 
 @app.route('/login',methods=['GET'])
 def index():
@@ -94,18 +103,22 @@ def signIn():
     # _email  = request.form['email']
     # _pass   = request.form['pass']
     request_json     = request.get_json()
-    _token           = request_json.get('token')
-    _username           = request_json.get('username')
-    _date           = request_json.get('date')
+    _id           = request_json.get('id')
+    #_token           = request_json.get('token')
+    #_username           = request_json.get('username')
+    #_date           = request_json.get('date')
 #    _hash_pass = generate_password_hash(_pass)
 
-    if _token and _username and _date:
-        insert(_token,_username,_date)
+    #if _token and _username and _date:
+    if _id:
+        #insert(_token,_username,_date)
+        token = insert(_id)
 
         conn = mysql.connect()
         cursor = conn.cursor()
         cursor.execute(
-            """SELECT * FROM users.user Where username = %s""", (_username))
+        #    """SELECT * FROM users.user Where username = %s""", (_username))
+            """SELECT * FROM users.user Where id = %s""", (_id))
         data = cursor.fetchall()[0]
         #dataList = []
         
@@ -115,10 +128,9 @@ def signIn():
         if data is not None:
             
             dataTempObj = {
-                'id'        : data[0],
-                'token'      : data[1],
-                'username'     : data[2],
-                'date'  : data[3]
+                'token'        : token,
+                'id'      : data[1],
+                'date'     : data[2],
             }
             
             resp = make_response(json.dumps(dataTempObj))
@@ -129,19 +141,29 @@ def signIn():
     else:
         return json.dumps({'error':'Ingrese los datos requeridos'})
 
-def insert(token,username,date):
+#def insert(token,username,date):
+def insert(id):
+
+    token = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+
+#    token = "cdeefhg1234567" 
+    sha_token = encrypt_string(token)
+    today = datetime.datetime.today() 
+    tomorrow  = today + datetime.timedelta(1)
+    date = datetime.datetime.strftime(tomorrow,'%Y-%m-%d') 
     conn = mysql.connect()
     cursor = conn.cursor()
     cursor.execute(
         """INSERT INTO users.user (
                 token,
-                username,
+                id,
                 date
             ) 
-            VALUES (%s,%s,%s)""",(token,username,date))
+            VALUES (%s,%s,%s)""",(sha_token,id,date))
     conn.commit()
     cursor.close()
     conn.close()
+    return token
 
 @app.route('/login/update/<id>',methods=['PATCH'])
 def update(id):
