@@ -4,8 +4,11 @@ services:
     build: .
     ports:
      - "5000:5000"
+    restart: unless-stopped
+    depends_on:
+     - 1a_login_db
   1a_login_db:
-    image: mysql
+    image: mysql:5.7
     ports:
       - "3307:3306"
     environment:
