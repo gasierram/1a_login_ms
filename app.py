@@ -80,20 +80,31 @@ def get(token):
     data = cursor.fetchone()
     cursor.close()
     conn.close()
+    
     #dataList = []
-    if data is not None:
-        
-        dataTempObj = {
-            'token'        : data[0],
-            'id'      : data[1],
-            'date'  : data[2]
-        }
-        
-        resp = make_response(json.dumps(dataTempObj))
+    if data is None:
+        resp = make_response(json.dumps({'error': 'token no encontrado'}), 404)        
         resp.headers["Content-Type"] = "application/json" 
         return resp
-    else:
-        return json.dumps({'error, id no encontrado'})
+
+    today = datetime.date.today() 
+    if today < data[2]: 
+        resp = make_response(json.dumps({'error': 'el token ha caducado'}), 403)
+        resp.headers["Content-Type"] = "application/json" 
+        return resp
+
+    dataTempObj = {
+        'token'        : data[0],
+        'id'      : data[1],
+        'date'  : data[2]
+    }
+    
+    resp = make_response(json.dumps(dataTempObj))
+    resp.headers["Content-Type"] = "application/json" 
+    return resp
+
+
+
 
 @app.route('/login',methods=['POST'])
 def signIn():
