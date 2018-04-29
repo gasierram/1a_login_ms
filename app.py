@@ -53,10 +53,9 @@ def index():
         conn.close()
         for item in data:
             dataTempObj = {
-               'id'        : item[0],
-               'token'      : item[1],
-               'username'     : item[2],
-               'date'  : item[3]
+               'token'        : item[0],
+               'id'      : item[1],
+               'date'  : item[2]
             }
             dataList.append(dataTempObj)
         resp = make_response(json.dumps(dataList))
@@ -83,10 +82,9 @@ def get(id):
     if data is not None:
         
         dataTempObj = {
-            'id'        : data[0],
-            'token'      : data[1],
-            'username'     : data[2],
-            'date'  : data[3]
+            'token'        : data[0],
+            'id'      : data[1],
+            'date'  : data[2]
         }
         
         resp = make_response(json.dumps(dataTempObj))
@@ -141,11 +139,14 @@ def signIn():
     else:
         return json.dumps({'error':'Ingrese los datos requeridos'})
 
+def generate_token():
+    token = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+    return token
+
+
 #def insert(token,username,date):
 def insert(id):
-
-    token = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
-
+    token = generate_token()
 #    token = "cdeefhg1234567" 
     sha_token = encrypt_string(token)
     today = datetime.datetime.today() 
