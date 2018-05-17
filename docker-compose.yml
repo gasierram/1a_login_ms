@@ -1,13 +1,13 @@
 version: '2'
 services:
-  1a_login_ms:
+  1a-login-ms:
     build: .
     ports:
      - "5000:5000"
     restart: unless-stopped
     depends_on:
-     - 1a_login_db
-  1a_login_db:
+     - 1a-login-db
+  1a-login-db:
     image: mysql:5.7
     ports:
       - "3307:3306"
@@ -16,5 +16,5 @@ services:
       MYSQL_USER: alejo
       MYSQL_PASSWORD: 1234
       MYSQL_DATABASE: users
-      MYSQL_HOST: 1a_login_db
+      MYSQL_HOST: 1a-login-db
       
