@@ -1,16 +1,16 @@
 version: '2'
 services:
   1a-login-ms:
-    build: .
+    image: fullhd4knofake/1a_login_ms
     ports:
-     - "5000:5000"
+     - "3005:5000"
     restart: unless-stopped
     depends_on:
      - 1a-login-db
   1a-login-db:
     image: mysql:5.7
     ports:
-      - "3307:3306"
+      - "3310:3306"
     environment:
       MYSQL_ROOT_PASSWORD: 1234
       MYSQL_USER: alejo
